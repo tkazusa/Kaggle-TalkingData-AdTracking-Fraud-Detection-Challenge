@@ -21,7 +21,7 @@ class DataHandling:
         pass
 
     @classmethod
-    def DowsizeBydtypes(self, df):
+    def change_dtypes(self, df):
         df_converted = pd.DataFrame()
         logger = Util.Logger(logfile_name=logfile_name)
         for name in df.columns:
@@ -38,12 +38,12 @@ class DataHandling:
             else:
                 df_converted[name] = df[name]
                 logger.info('%s has nothing to be done' % name)
-
+        
         return df_converted
 
 
     @classmethod
-    def KFoldToPickle(self, X, y, num_of_folds, DIR_TO_SAVED):
+    def KFolds2pickle(self, X, y, num_of_folds, DIR_TO_SAVED):
         """
         :param X: array
         :param y: array
@@ -73,17 +73,18 @@ class DataHandling:
                 self.ToPickle(y_val, os.path.join(CV_DIR, 'y_val_%s.pickle' % i))
 
     @classmethod
-    def ToCSVEachColumn(self, df):
+    def columns2csv(self, df, SAVE_DIR):
         logger = Util.Logger(logfile_name=logfile_name)
-
+        
         for column in df.columns:
-            df[column].to_csv('input/tr_test_' + str(column) + '.csv')
-            logger.info('pd.Series of %s is saved' % column)
+            SAVE_PATH = os.path.join(SAVE_DIR, column + '.csv')
+            df[column].to_csv(SAVE_PATH)
+            logger.info('pd.Series of %s is saved at %s' % (column, SAVE_PATH))
 
         logger.info('end save data')
 
     @classmethod
-    def SubsetToFeather(self, df, subsample='head', n_sample=100, filepath=None):
+    def subset2csv(self, df, subsample='head', n_sample=100, filepath=None):
         logger = Util.Logger(logfile_name=logfile_name)
         logger.info('Saving %s subsample data' % subsample)
         if subsample == 'head':
@@ -94,8 +95,16 @@ class DataHandling:
             
         elif subsample == 'random':
             df = df.sample(n_sample)
-            df.to_csv(filepath)
 
         df.to_csv(filepath)
         logger.info('end save data')
-
+    
+    @classmethod
+    def check_dtypes(self, df):
+        columns_list = df.columns
+        for column in columns_list:
+            if df[column].dtype == 'object':
+                print('===type check===')
+                print('type of %s is %s' % (column, type(df[column][0])))
+            else:
+                pass

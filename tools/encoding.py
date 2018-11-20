@@ -8,7 +8,7 @@ from sklearn.feature_extraction import FeatureHasher
 http://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-munging/target-encoding.html
 """
 
-class FreqencyEncoder:
+class FrequencyEncoder:
     """Encode categorical integer features to numerical features correspondig to its frequency."""
     
     def __init__(self):

@@ -5,7 +5,11 @@
 #
 import os
 import datetime
+import json
+import time
+from contextlib import contextmanager
 
+import requests
 import pandas as pd
 from sklearn.externals import joblib
 from sklearn.model_selection import StratifiedKFold
@@ -72,4 +76,22 @@ class Util:
                            daiquiri.output.File(logfile_name, level=logging.DEBUG)
                        ))
         return daiquiri.getLogger(__name__)
-    
+
+
+def send_line_notification(message, config_path):
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    line_token = config['line_token']  # 終わったら無効化する
+    line_notify_api = 'https://notify-api.line.me/api/notify'
+    message = "\n{}".format(message)
+    payload = {'message': message}
+    headers = {'Authorization': 'Bearer {}'.format(line_token)}  # 発行したトークン
+    requests.post(line_notify_api, data=payload, headers=headers)
+
+
+@contextmanaer
+def timer(name):
+    start = time.time()
+    print(f'[{name}] start')
+    yield
+    print(f'[{}name]
