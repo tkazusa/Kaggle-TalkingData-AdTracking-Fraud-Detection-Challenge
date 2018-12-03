@@ -1,4 +1,5 @@
 # -*- encoding: UTF-8 -*-
+# -*- encoding: UTF-8 -*-
 from pathlib import Path
 
 import pandas as pd
@@ -21,8 +22,6 @@ test['click_time'] = pd.to_datetime(test['click_time'])
 class TimeInformation(Feature):
     def create_features(self):
         self.train = train
-        print(self.train.head())
-        print(self.train.shape)
         self.test = test
          
         self.train['day'] = self.train['click_time'].dt.day.astype('uint8')
@@ -34,10 +33,3 @@ class TimeInformation(Feature):
         self.test['hour'] = self.test['click_time'].dt.hour.astype('uint8')
         self.test['minute'] = self.test['click_time'].dt.minute.astype('uint8')
         self.test['second'] = self.test['click_time'].dt.second.astype('uint8')
-
-        self.train = self.train.reset_index(drop=True)
-        self.test = self.test.reset_index(drop=True)
-
-
-        print(self.train.head())
-        print(self.train.shape)

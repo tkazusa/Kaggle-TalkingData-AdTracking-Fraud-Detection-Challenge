@@ -2,8 +2,9 @@
 import argparse
 import itertools
 import json
-import os
 import time
+from datetime import datetime
+from pathlib import Path
 from typing import List
 
 import numpy as np
@@ -26,14 +27,16 @@ def dump_json_log(options, train_results):
         },
         'config': config,
     }
-    log_path = os.path.join(os.path.dirname(__file__), output_directory,
-                            os.path.basename(options.config) + '.result_downsampling.json')
-    json.dump(results, open(log_path, 'w'), indent=2)
+    basename = datetime.now().strftime("%Y%m%d-%H%M")
+    log_path = Path(__file__).parents[0] / logdir / (basename+'.result_downsampling.json')
+    print(log_path)
+    json.dump(results, open(str(log_path), 'w'), indent=2)
 
 
 def load_datasets(feats: List[str]):
     dfs = [pd.read_csv('features/{}_train.csv'.format(f)) for f in feats]
     train = pd.concat(dfs, axis=1)
+    print(train.head())
     train['target'] = train['is_attributed']
     train.drop(['is_attributed', 'click_time'], axis=1, inplace=True)
     
@@ -62,7 +65,7 @@ if __name__ == '__main__':
     config = json.load(open(options.config))
 
 
-    output_directory = 'data/output'
+    logdir = 'logs'
     models = {'lightgbm': LightGBM}
     feats = config['features']
 
@@ -92,4 +95,6 @@ if __name__ == '__main__':
     dump_json_log(options, train_results)
     target = 'target'
     y_pred_prob = booster.predict(test, num_iteration=booster.best_iteration)
+    print(sampled_train.head())
+    print(sampled_train.shape)
 

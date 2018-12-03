@@ -1,0 +1,54 @@
+{
+  "training": {
+    "average_time": 16.094032526016235,
+    "trials": [
+      {
+        "train_auc": 0.9776785150627509,
+        "time": 16.094032526016235,
+        "best_iteration": 18,
+        "valid_auc": 0.929513161941455
+      }
+    ],
+    "average_train_auc": 0.9776785150627509,
+    "train_auc_std": 0.0,
+    "valid_auc_std": 0.0,
+    "average_valid_auc": 0.929513161941455
+  },
+  "config": {
+    "model": {
+      "name": "lightgbm",
+      "model_params": {
+        "subsample": 0.7,
+        "learning_rate": 0.2,
+        "max_depth": 4,
+        "min_child_weight": 0,
+        "verbose": 0,
+        "boosting_type": "gbdt",
+        "objective": "binary",
+        "max_bin": 100,
+        "min_child_samples": 100,
+        "metric": [
+          "auc"
+        ],
+        "num_leaves": 50,
+        "subsample_freq": 1,
+        "validation_ratio": 0.1
+      },
+      "train_params": {
+        "early_stopping_rounds": 100,
+        "num_boost_round": 250
+      }
+    },
+    "dataset": {
+      "negative_down_sampling": {
+        "bagging_size": 5,
+        "enabled": true,
+        "random_state": 3655
+      }
+    },
+    "features": [
+      "0.TimeInformation",
+      "1.ConfidenceRate"
+    ]
+  }
+}
