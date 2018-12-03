@@ -1,12 +1,13 @@
 # -*- encoding: UTF-8 -*-
 from typing import List, Tuple
 
+import numpy as np
 import lightgbm as lgb
 import pandas as pd
 import time
 from lightgbm import Booster
 
-from models.base import Model
+from models import Model
 
 
 class LightGBM(Model):
@@ -18,16 +19,20 @@ class LightGBM(Model):
         if list(train.columns) != list(valid.columns):
             raise ValueError('Train and valid must have a same column list')
 
-        predictors = train.columns.drop(target)
-        d_train = lgb.Dataset(train[predictors], label=train[target].values)
-        d_valid = lgb.Dataset(valid[predictors], label=valid[target].values)
+        classdist = pd.value_counts(train['target'])
+        weights = {i: round(np.sum(classdist) / classdist[i]) for i in classdist.index}
+        weight_list_train = [weights[i] for i in train['target'].values]
+        weight_list_valid = [weights[i] for i in valid['target'].values]
+
+        d_train = lgb.Dataset(train.drop(target, axis=1), label=train[target].values, weight=weight_list_train)
+        d_valid = lgb.Dataset(valid.drop(target, axis=1), label=valid[target].values, weight=weight_list_valid)
 
         eval_results = {}
-        model: Booster = lgb.train(params['model_params'],
-                                   d_train,
-                                   categorical_feature=categorical_features,
-                                   valid_sets=[d_train, d_valid],
-                                   valid_names=['train', 'valid'],
-                                   evals_result=eval_results,
-                                   **params['train_params'])
+        model = lgb.train(params['model_params'],
+                          d_train,
+                          categorical_feature=categorical_features,
+                          valid_sets=[d_train, d_valid],
+                          valid_names=['train', 'valid'],
+                          evals_result=eval_results,
+                          **params['train_params'])
         return model, eval_results
