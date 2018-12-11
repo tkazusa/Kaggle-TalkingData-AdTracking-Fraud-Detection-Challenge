@@ -38,9 +38,6 @@ ATTRIBUTION_CATEGORIES = [
 
 class ConfidenceRate(Feature):
     def create_features(self):
-        print(train.head())
-        print(train.shape)
-
         # Find frequency of is_attributed for each unique value in column
         for cols in ATTRIBUTION_CATEGORIES:
             
@@ -91,5 +88,3 @@ class ConfidenceRate(Feature):
                 on=cols, how='left'
             )[new_feature]
 
-        print(self.train.head())
-        print(self.train.shape)

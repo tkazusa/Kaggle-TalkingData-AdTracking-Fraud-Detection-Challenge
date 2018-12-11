@@ -14,7 +14,7 @@ import lightgbm as lgb
 from models.lightgbm import LightGBM
 
 
-def dump_json_log(options, train_results):
+def dump_json_log(options, train_results, basename):
     config = json.load(open(options.config))
     results = {
         'training': {
@@ -27,7 +27,6 @@ def dump_json_log(options, train_results):
         },
         'config': config,
     }
-    basename = datetime.now().strftime("%Y%m%d-%H%M")
     log_path = Path(__file__).parents[0] / logdir / (basename+'.result_downsampling.json')
     print(log_path)
     json.dump(results, open(str(log_path), 'w'), indent=2)
@@ -36,7 +35,6 @@ def dump_json_log(options, train_results):
 def load_datasets(feats: List[str]):
     dfs = [pd.read_csv('features/{}_train.csv'.format(f)) for f in feats]
     train = pd.concat(dfs, axis=1)
-    print(train.head())
     train['target'] = train['is_attributed']
     train.drop(['is_attributed', 'click_time'], axis=1, inplace=True)
     
@@ -92,9 +90,25 @@ if __name__ == '__main__':
         'best_iteration': booster.best_iteration,
         'time': time.time() - start_time})
 
-    dump_json_log(options, train_results)
-    target = 'target'
-    y_pred_prob = booster.predict(test, num_iteration=booster.best_iteration)
-    print(sampled_train.head())
-    print(sampled_train.shape)
+    basename = datetime.now().strftime("%Y%m%d-%H%M")
+    dump_json_log(options, train_results, basename)
+    y_pred_prob = booster.predict(test.drop(['click_id'], axis=1), num_iteration=booster.best_iteration)
 
+    # search threshold
+    min_error = 1.0
+    best_threshold = 0.5
+    for i in np.linspace(0.8, 0.999, num=100):
+        attributed_rate = 0.0019
+        y_pred = np.where(y_pred_prob < i, 0, 1)
+        error = (attributed_rate - (sum(y_pred)/len(y_pred)))**2
+        best_threshold = i if error < min_error else best_threshold 
+        min_error = error if error < min_error else min_error
+    print(best_threshold)
+
+    y_pred = np.where(y_pred_prob < best_threshold, 0, 1)
+
+    my_submission = pd.DataFrame()
+    my_submission['click_id'] = test['click_id']
+    my_submission['is_attributed'] = y_pred
+
+    my_submission.to_csv("submission/submission_{}.csv".format(basename), index=False)

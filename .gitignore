@@ -137,6 +137,7 @@ pip-selfcheck.json
 ##################
 data/
 input/
+logs/
 *.csv
 *.gz
 *.pkl
