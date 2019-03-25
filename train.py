@@ -2,9 +2,9 @@
 import gc
 import itertools
 import time
-import lightgbm as lgb
 from pathlib import Path
 
+import lightgbm as lgb
 import numpy as np
 import pandas as pd
 from gensim import corpora, models
@@ -45,108 +45,6 @@ def bind_tr_test(train, test):
     gc.collect()
 
     return data
-
-
-def create_time_features(data):
-    print("Creating new time features: 'hour' and 'day'...")
-    data['hour'] = pd.to_datetime(data.click_time).dt.hour.astype('uint8')
-    data['day'] = pd.to_datetime(data.click_time).dt.day.astype('uint8')
-
-    gc.collect()
-    return data
-
-
-def create_count_channels_features(data):
-    print("Creating new count features: 'n_channels', 'ip_app_count', 'ip_app_os_count'...")
-
-    print('Computing the number of channels associated with ')
-    print('a given IP address within each hour...')
-    print('一時間の中でIPアドレス毎のチャネル数を数えている')
-    n_chans = data[['ip', 'day', 'hour', 'channel']].groupby(by=['ip', 'day', 'hour'])[
-        ['channel']].count().reset_index().rename(columns={'channel': 'n_channels'})
-    print('Merging the channels data with the main data set...')
-    data = data.merge(n_chans, on=['ip', 'day', 'hour'], how='left')
-    del n_chans
-    gc.collect()
-    data['n_channels'].astype('uint16').to_csv(WORKDIR/'n_channels.csv')
-    print("Saving the data")
-    data.drop(['n_channels'], axis=1)
-
-    print('Computing the number of channels associated with ')
-    print('a given IP address and app...')
-    print('IPアドレス毎/app毎のチャネル数を数えている')
-    n_chans = data[['ip', 'app', 'channel']].groupby(by=['ip', 'app'])[
-        ['channel']].count().reset_index().rename(columns={'channel': 'ip_app_count'})
-    print('Merging the channels data with the main data set...')
-    data = data.merge(n_chans, on=['ip', 'app'], how='left')
-    del n_chans
-    gc.collect()
-    data['ip_app_count'].astype('uint16').to_csv(WORKDIR/'ip_app_count.csv')
-    print("Saving the data")
-    data.drop(['ip_app_count'], axis=1)
-
-    print('Computing the number of channels associated with ')
-    print('a given IP address, app, and os...')
-    print('IPアドレス毎/app毎/os毎のチャネル数を数えている')
-    n_chans = data[['ip', 'app', 'os', 'channel']].groupby(by=['ip', 'app', 'os'])[
-        ['channel']].count().reset_index().rename(columns={'channel': 'ip_app_os_count'})
-    print('Merging the channels data with the main data set...')
-    data = data.merge(n_chans, on=['ip', 'app', 'os'], how='left')
-    del n_chans
-    gc.collect()
-    data['ip_app_os_count'].astype('uint16').to_csv(
-        WORKDIR/'ip_app_os_count.csv')
-    print("Saving the data")
-    data.drop(['ip_app_os_count'], axis=1)
-
-    del data
-    gc.collect()
-
-
-def create_LDA_features(data, column_pair):
-    col1, col2 = column_pair
-    print('pair of %s & %s' % (col1, col2))
-    tmp_dict = {}
-    for v_col1, v_col2 in zip(data[col1], data[col2]):
-        tmp_dict.setdefault(v_col1, []).append(str(v_col2))
-
-    col1_list = list(tmp_dict.keys())
-    col2s_of_col1s_list = [[' '.join(tmp_dict[tokun])] for tokun in col1_list]
-
-    dictionary = corpora.Dictionary(col2s_of_col1s_list)
-    corpus = [dictionary.doc2bow(tokens) for tokens in col2s_of_col1s_list]
-    print('Start learning LDA model')
-
-    model = models.LdaModel(corpus,
-                            num_topics=5,
-                            id2word=dictionary,
-                            random_state=3655
-                            )
-
-    print('Saving the model')
-    features = np.array(model.get_document_topics(
-        corpus, minimum_probability=0))[:, :, 1]
-
-    column_name_list = ["lda_%s_%s_" % (col1, col2) + str(i) for i in range(5)]
-
-    df_features = pd.DataFrame(features, columns=column_name_list)
-    df_features[col1] = col1_list
-
-    print("---merging data---")
-    print(df_features.head())
-
-    data = pd.merge(data, df_features, on=col1, how='left')
-    del df_features
-    gc.collect()
-
-    datapath = "lda_" + col1 + "_" + col2 + ".csv"
-    data[column_name_list].to_csv(WORKDIR/datapath)
-
-    print("shape of merged data is %s %s " % data[column_name_list].shape)
-
-
-def get_column_pairs(columns):
-    return [(col1, col2) for col1, col2 in itertools.product(columns, repeat=2) if col1 != col2]
 
 
 def train_test_split(data, len_train):
@@ -232,17 +130,10 @@ if __name__ == "__main__":
     print("loading time is %s" % loading_time)
 
     len_train = len(train)
+    print("train size: ", len(train))
+    print("test size: ", len(test))
+
     data = bind_tr_test(train, test)
-    data = create_time_features(data)
-
-    create_count_channels_features(data)
-
-    columns = ['app', 'os', 'channel']
-    # column_pairs = get_column_pairs(columns)
-
-    for col in columns:
-        pair = ('ip', col)
-        create_LDA_features(data, pair)
 
     features = ["ip_app_count", "ip_app_os_count", "lda_ip_app", "lda_ip_channel",
                 "lda_ip_os", "n_channels"]
@@ -288,11 +179,10 @@ if __name__ == "__main__":
     sub = pd.DataFrame()
     test_id = pd.read_csv(INPUTDIR/'test.csv')
     sub['click_id'] = test_id['click_id'].astype('int')
+    print(sub.head())
     del test_id
     gc.collect()
 
-    print(sub.head())
-    """
     print("Training...")
     start_time = time.time()
 
@@ -335,4 +225,3 @@ if __name__ == "__main__":
     print("writing...")
     sub.to_csv('sub_lgb.csv', index=False)
     print("done...")
-    """
