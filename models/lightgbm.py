@@ -7,7 +7,7 @@ import pandas as pd
 import time
 from lightgbm import Booster
 
-from models import Model
+from models.base import Model
 
 
 class LightGBM(Model):
