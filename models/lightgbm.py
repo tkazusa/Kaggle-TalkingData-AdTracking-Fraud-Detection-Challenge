@@ -19,11 +19,7 @@ class LightGBM(Model):
             raise ValueError('Train and valid must have a same column list')
 
         predictors = train.columns.drop(target)
-        if weight is None:
-            d_train = lgb.Dataset(train[predictors], label=train[target].values)
-        else:
-            print(weight)
-            d_train = lgb.Dataset(train[predictors], label=train[target].values, weight=weight)
+        d_train = lgb.Dataset(train[predictors], label=train[target].values)
         d_valid = lgb.Dataset(valid[predictors], label=valid[target].values)
 
         eval_results = {}
