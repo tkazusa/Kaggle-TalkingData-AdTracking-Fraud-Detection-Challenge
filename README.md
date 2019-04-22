@@ -1,15 +1,23 @@
 # TalkingDataAdTrackingFraudDetectionChallenge
-## Setup
-必要なパッケージをインストールする。
+## Getting started
+### Setup
+Install required packages.
 ```
  conda install --channel conda-forge --file requirements.txt
 ```
 Data donwload from the kaggle competition page with kaggle api command.
 
+### Setup kaggle api credential
+Download kaggle.json and place in the location: ~/.kaggle/kaggle.json.
+See details: https://github.com/Kaggle/kaggle-api
+
+
+### Download and unzip datasets from competition page
 ```
+pip install kaggle
 cd <REPOSITORY DIRECTORY>
 kaggle competitions download -c talkingdata-adtracking-fraud-detection -p ./input
-unzip -jl './input/*.zip' 
+unzip -jl './input/*.zip'
 ```
 
 ## What you learn from this kernel
