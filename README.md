@@ -8,6 +8,11 @@ conda install --channel conda-forge --yes --file requirements.txt
 source deactivate 
 ```
 
+For docker environment.
+```
+docker compose
+docker run -p 88:88 <contair name>
+```
 
 ### Setup kaggle api credential
 Download kaggle.json and place in the location: ~/.kaggle/kaggle.json.
