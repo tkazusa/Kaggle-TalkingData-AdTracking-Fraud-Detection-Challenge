@@ -1,13 +1,15 @@
 # TalkingDataAdTrackingFraudDetectionChallenge
 ## Setup
-Dockerfileの中でgit cloneする。
+必要なパッケージをインストールする。
 ```
-docker compose
+conda install --file requirements.txt
 ```
 Data donwload from the kaggle competition page with kaggle api command.
+
 ```
-kaggle competitions download -c talkingdata-adtracking-fraud-detection -p /home/ec2-user/SageMaker/TalkingDataAdTrackingFraudDetectionChallenge/input
-unzip -jl '/home/ec2-user/SageMaker/TalkingDataAdTrackingFraudDetectionChallenge/input/*.zip' 
+cd <REPOSITORY DIRECTORY>
+kaggle competitions download -c talkingdata-adtracking-fraud-detection -p ./input
+unzip -jl './input/*.zip' 
 ```
 
 ## What you learn from this kernel
