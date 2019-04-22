@@ -10,7 +10,7 @@ from models.base import Model
 
 
 class LightGBM(Model):
-    def train_and_predict(self, train, valid, weight, categorical_features: List[str], target: str, params: dict) \
+    def train_and_predict(self, train, valid, categorical_features: List[str], target: str, params: dict) \
             -> Tuple[Booster, dict]:
         if type(train) != pd.DataFrame or type(valid) != pd.DataFrame:
             raise ValueError('Parameter train and valid must be pandas.DataFrame')
