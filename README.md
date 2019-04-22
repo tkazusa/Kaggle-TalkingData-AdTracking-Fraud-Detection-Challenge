@@ -1,11 +1,13 @@
 # TalkingDataAdTrackingFraudDetectionChallenge
 ## Getting started
-### Setup
-Install required packages.
+### Install required packages 
+For SageMaker notebook instance.
 ```
- conda install --channel conda-forge --yes --file requirements.txt
+source activate python3
+conda install --channel conda-forge --yes --file requirements.txt
+source deactivate 
 ```
-Data donwload from the kaggle competition page with kaggle api command.
+
 
 ### Setup kaggle api credential
 Download kaggle.json and place in the location: ~/.kaggle/kaggle.json.
@@ -14,6 +16,7 @@ See details: https://github.com/Kaggle/kaggle-api
 
 
 ### Download and unzip datasets from competition page
+Data donwload from the kaggle competition page with kaggle api command.
 ```
 pip install kaggle
 cd <REPOSITORY DIRECTORY>
