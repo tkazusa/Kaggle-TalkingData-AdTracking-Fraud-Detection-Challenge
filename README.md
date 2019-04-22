@@ -3,7 +3,7 @@
 ### Setup
 Install required packages.
 ```
- conda install --channel conda-forge --file requirements.txt
+ conda install --channel conda-forge --yes --file requirements.txt
 ```
 Data donwload from the kaggle competition page with kaggle api command.
 
