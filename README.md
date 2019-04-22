@@ -2,7 +2,7 @@
 ## Setup
 必要なパッケージをインストールする。
 ```
-conda install --file requirements.txt
+ conda install --channel conda-forge --file requirements.txt
 ```
 Data donwload from the kaggle competition page with kaggle api command.
 
