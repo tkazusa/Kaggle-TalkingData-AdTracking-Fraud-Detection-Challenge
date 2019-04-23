@@ -10,8 +10,8 @@ source deactivate
 
 For docker environment.
 ```
-docker compose
-docker run -p 88:88 <contair name>
+docker build -t <container name> .
+docker run -it -p 8888:8888 <container name>
 ```
 
 ### Setup kaggle api credential
@@ -27,6 +27,12 @@ pip install kaggle
 cd <REPOSITORY DIRECTORY>
 kaggle competitions download -c talkingdata-adtracking-fraud-detection -p ./input
 unzip -jl './input/*.zip'
+```
+
+### Run jupyter lab
+```
+jupyter lab --ip 0.0.0.0 --allow-root
+
 ```
 
 ## What you learn from this kernel
