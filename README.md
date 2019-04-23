@@ -37,3 +37,5 @@ jupyter lab --ip 0.0.0.0 --allow-root
   - Negative downsampling for extremely imbalance data.
 - Categorical feature embedding
   - Embedding by using LDA.
+
+See a [notebook](https://github.com/tkazusa/TalkingDataAdTrackingFraudDetectionChallenge/blob/master/notebooks/kernel.ipynb) for details.
