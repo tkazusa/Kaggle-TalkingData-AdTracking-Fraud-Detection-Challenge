@@ -10,8 +10,8 @@ source deactivate
 
 For docker environment.
 ```
-docker compose
-docker run -p 88:88 <contair name>
+docker build -t <container name> .
+docker run -it -p 8888:8888 <container name>
 ```
 
 ### Setup kaggle api credential
