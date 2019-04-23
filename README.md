@@ -1,4 +1,6 @@
-# TalkingDataAdTrackingFraudDetectionChallenge
+# TalkingData AdTracking Fraud Detection Challenge
+A brief solution for [TalkingData AdTracking Fraud Detection Challenge]
+
 ## Requirements
 - docker >= 17.03
 
