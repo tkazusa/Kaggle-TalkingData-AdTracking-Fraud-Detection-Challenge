@@ -1,5 +1,5 @@
 # TalkingData AdTracking Fraud Detection Challenge
-A brief solution for [TalkingData AdTracking Fraud Detection Challenge]
+A brief solution for [TalkingData AdTracking Fraud Detection Challenge](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection)
 
 ## Requirements
 - docker >= 17.03
