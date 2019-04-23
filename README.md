@@ -1,17 +1,12 @@
 # TalkingDataAdTrackingFraudDetectionChallenge
-## Getting started
-### Install required packages 
-For SageMaker notebook instance.
-```
-source activate python3
-conda install --channel conda-forge --yes --file requirements.txt
-source deactivate 
-```
+## Requirements
+- docker >= 17.03
 
-For docker environment.
+## Getting started
+### Build docker image 
 ```
-docker build -t <container name> .
-docker run -it -p 8888:8888 <container name>
+docker build -t <image name> .
+docker run -it -p 8888:8888 --name <container name> <image name>
 ```
 
 ### Setup kaggle api credential
@@ -23,24 +18,22 @@ See details: https://github.com/Kaggle/kaggle-api
 ### Download and unzip datasets from competition page
 Data donwload from the kaggle competition page with kaggle api command.
 ```
-pip install kaggle
-cd <REPOSITORY DIRECTORY>
-kaggle competitions download -c talkingdata-adtracking-fraud-detection -p ./input
-unzip -jl './input/*.zip'
+mkdir $HOME/input
+cd ./input
+kaggle competitions download -c talkingdata-adtracking-fraud-detection
+unzip '*.zip'
 ```
 
 ### Run jupyter lab
 ```
 jupyter lab --ip 0.0.0.0 --allow-root
-
 ```
 
 ## What you learn from this kernel
-- Approach to large size of data
-- Classification for inbalamce data
-
-## Approach 
-1. pandasデータ型指定によるメモリ使用量の削減 
-2. 全データを用いたシンプル特徴量作成
-3. LDAを用いたカテゴリカルデータの埋め込み
-4. 学習時のNegative down samplingによるサンプルサイズ削減とクラス不均衡へ対応
+- Approach to large size of data.
+  - Memory usage reduction by converting dtypes of pd.DataFrame.
+  - Negative downsampling for extremely imbalance data.
+- Classification for imbalance data.
+  - Negative downsampling for extremely imbalance data.
+- Categorical feature embedding
+  - Embedding by using LDA.

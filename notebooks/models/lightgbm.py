@@ -2,10 +2,10 @@
 import copy
 from typing import List, Tuple
 
-import lightgbm as lgb
 import pandas as pd
-from lightgbm import Booster
 
+import lightgbm as lgb
+from lightgbm import Booster
 from models.base import Model
 
 
@@ -13,7 +13,8 @@ class LightGBM(Model):
     def train_and_predict(self, train, valid, categorical_features: List[str], target: str, params: dict) \
             -> Tuple[Booster, dict]:
         if type(train) != pd.DataFrame or type(valid) != pd.DataFrame:
-            raise ValueError('Parameter train and valid must be pandas.DataFrame')
+            raise ValueError(
+                'Parameter train and valid must be pandas.DataFrame')
 
         if list(train.columns) != list(valid.columns):
             raise ValueError('Train and valid must have a same column list')
@@ -23,13 +24,13 @@ class LightGBM(Model):
         d_valid = lgb.Dataset(valid[predictors], label=valid[target].values)
 
         eval_results = {}
-        model: Booster = lgb.train(params['model_params'],
-                                   d_train,
-                                   categorical_feature=categorical_features,
-                                   valid_sets=[d_train, d_valid],
-                                   valid_names=['train', 'valid'],
-                                   evals_result=eval_results,
-                                   **params['train_params'])
+        model = lgb.train(params['model_params'],
+                          d_train,
+                          categorical_feature=categorical_features,
+                          valid_sets=[d_train, d_valid],
+                          valid_names=['train', 'valid'],
+                          evals_result=eval_results,
+                          **params['train_params'])
         return model, eval_results
 
     def train_without_validation(self, train, categorical_features: List[str], target: str, params: dict, best_iteration: int):
@@ -41,6 +42,6 @@ class LightGBM(Model):
             del train_params['early_stopping_rounds']
         model = lgb.train(params['model_params'],
                           d_train,
-                          categorical_feature = categorical_features,
+                          categorical_feature=categorical_features,
                           **train_params)
         return model
