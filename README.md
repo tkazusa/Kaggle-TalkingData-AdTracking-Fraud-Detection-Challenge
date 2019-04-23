@@ -29,6 +29,12 @@ kaggle competitions download -c talkingdata-adtracking-fraud-detection -p ./inpu
 unzip -jl './input/*.zip'
 ```
 
+### Run jupyter lab
+```
+jupyter lab --ip 0.0.0.0 --allow-root
+
+```
+
 ## What you learn from this kernel
 - Approach to large size of data
 - Classification for inbalamce data
